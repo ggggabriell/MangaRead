@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mangareader.R;
 import com.example.mangareader.domain.MangaDexAPI;
 import com.example.mangareader.domain.RetrofitClient;
@@ -53,10 +54,19 @@ public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdap
     public void onBindViewHolder(@NonNull MangaFeaturesAdapter.ViewHolder holder, int position) {
         MangaModel item = list.get(position);
 
-        holder.tvMangaTitle.setText(item.getTitle());
+        if(item.getTitle().length() > 20){
+            String split = item.getTitle().substring(0, 18) +  "...";
+            holder.tvMangaTitle.setText(split);
 
+        }else{
+            holder.tvMangaTitle.setText(item.getTitle());
+        }
 
-
+        Glide.with(holder.itemView.getContext())
+                .asBitmap()
+                .load("https://mangadex.org/covers/" + item.getMangaCover())
+                .centerCrop()
+                .into(holder.ivMangaCover);
 
 
     }

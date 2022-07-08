@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MangaDexAPI {
 //    @GET("/manga/801513ba-a712-498c-8f57-cae55b38cc92")
@@ -18,8 +19,7 @@ public interface MangaDexAPI {
     @GET("/cover/{mangaCover}/")
     Call<JsonObject> getCover(@Path("mangaCover") String mangaCover);
 
-
-    @GET("/covers/{mangaCover}/")
-    Call<JsonElement> getMangaImage(@Path("mangaCover") String mangaCover);
+    @GET("/manga/")
+    Call<JsonObject> searchManga(@Query("title") String search);
 
 }
