@@ -1,6 +1,7 @@
 package com.example.mangareader;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mangareader.adapter.MangaFeaturesAdapter;
@@ -15,6 +17,7 @@ import com.example.mangareader.databinding.ActivityMainBinding;
 import com.example.mangareader.domain.MangaDexAPI;
 import com.example.mangareader.domain.RetrofitClient;
 import com.example.mangareader.domain.model.MangaModel;
+import com.example.mangareader.viewModel.GetMangaViewModel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private MangaFeaturesAdapter mangaFeaturesAdapter;
     private MangaFeaturesAdapter mangaSearchAdapter;
     private String search = "";
+    private GetMangaViewModel mangaViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,70 +53,29 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rvMangaList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvMangaList.setHasFixedSize(true);
-        mangaFeaturesAdapter = new MangaFeaturesAdapter(mangaList);
-        binding.rvMangaList.setAdapter(mangaFeaturesAdapter);
-
-        // RECYCLER SEARCH
         binding.rvSearchManga.setLayoutManager(new GridLayoutManager(this, 2));
         binding.rvSearchManga.setHasFixedSize(true);
-        mangaSearchAdapter = new MangaFeaturesAdapter(searchMangaList);
-        binding.rvSearchManga.setAdapter(mangaSearchAdapter);
 
+        mangaViewModel = new ViewModelProvider(this).get(GetMangaViewModel.class);
 
-        MangaDexAPI api = RetrofitClient.getRetrofitInstance().create(MangaDexAPI.class);
-        Call<JsonObject> call = api.getManga();
+        mangaViewModel.getManga();
+        mangaViewModel.getManga.observe(this, sucess -> {
+            if (sucess) {
+                mangaList = mangaViewModel.getMangaList();
+                mangaFeaturesAdapter = new MangaFeaturesAdapter(mangaList);
+                binding.rvMangaList.setAdapter(mangaFeaturesAdapter);
 
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-
-                JsonObject object = response.body();
-                JsonArray arrayMangas = object.getAsJsonArray("data");
-
-                for (int i = 0; i < arrayMangas.size(); i++) {
-
-                    JsonObject manga = (JsonObject) arrayMangas.get(i);
-                    String id = manga.getAsJsonPrimitive("id").getAsString();
-
-                    JsonObject attributes = manga.getAsJsonObject("attributes");
-                    String title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
-
-                    String mangaCover = "";
-                    String desc = "";
-                    String status = "";
-                    int year = 0;
-                    String state = "";
-                    String createdAt = "";
-                    String updatedAt = "";
-                    String lastVolume = "";
-                    String lastChapter = "";
-                    String publicationDemographic = "";
-
-                    try {
-                        mangaCover = manga.getAsJsonArray("relationships").get(2).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
-                        desc = attributes.getAsJsonObject("description").getAsJsonPrimitive("en").getAsString();
-                        status = attributes.getAsJsonPrimitive("status").getAsString();
-                        year = attributes.getAsJsonPrimitive("year").getAsInt();
-                        state = manga.getAsJsonObject("attributes").getAsJsonPrimitive("state").getAsString();
-                        createdAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("createdAt").getAsString();
-                        updatedAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("updatedAt").getAsString();
-                        lastVolume = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastVolume").getAsString();
-                        lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsString();
-                        publicationDemographic = manga.getAsJsonObject("attributes").getAsJsonPrimitive("publicationDemographic").getAsString();
-                    } catch (Exception ignored) {
-                    }
-
-                    MangaModel mangaModel = new MangaModel(id, title, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
-                    mangaList.add(mangaModel);
-                }
-                getMangaImage(mangaList);
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
             }
         });
+
+        mangaViewModel.search.observe(this, sucess -> {
+            if (sucess) {
+                searchMangaList = mangaViewModel.getSearchList();
+                mangaSearchAdapter = new MangaFeaturesAdapter(searchMangaList);
+                binding.rvSearchManga.setAdapter(mangaSearchAdapter);
+            }
+        });
+
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -121,14 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence c, int i, int i1, int i2) {
-                if (c.length() >= 4) {
-                    search = c.toString();
-                    searchManga(search);
-                }
+                search = c.toString();
+                mangaViewModel.searchManga(search);
 
-                if(c.equals("")){
-                    searchMangaList.clear();
-                }
             }
 
             @Override
@@ -137,99 +95,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getMangaImage(List<MangaModel> list) {
-
-        for (int i = 0; i < list.size(); i++) {
-
-            MangaDexAPI api = RetrofitClient.getRetrofitInstance().create(MangaDexAPI.class);
-            Call<JsonObject> callCover = api.getCover(list.get(i).getMangaCover());
-
-            int finalI = i;
-            callCover.enqueue(new Callback<JsonObject>() {
-                @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    JsonObject object = response.body();
-
-                    try {
-                        String path = object.getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonPrimitive("fileName").getAsString();
-                        if (list.get(finalI).getMangaCover() != null) {
-                            list.get(finalI).setMangaCover(list.get(finalI).getId() + "/" + path);
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                    mangaFeaturesAdapter.notifyDataSetChanged();
-                    mangaSearchAdapter.notifyDataSetChanged();
-                }
-
-
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                }
-            });
-        }
-
-    }
-
-    private void searchManga(String search) {
-
-        MangaDexAPI api = RetrofitClient.getRetrofitInstance().create(MangaDexAPI.class);
-        Call<JsonObject> callSearch = api.searchManga(search);
-
-        callSearch.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                searchMangaList.clear();
-                JsonObject object = response.body();
-                JsonArray arraySearchMangas = object.getAsJsonArray("data");
-
-                for (int i = 0; i < arraySearchMangas.size(); i++) {
-
-                    JsonObject manga = (JsonObject) arraySearchMangas.get(i);
-                    String id = manga.getAsJsonPrimitive("id").getAsString();
-
-                    JsonObject attributes = manga.getAsJsonObject("attributes");
-
-                    String title = "";
-                    String mangaCover = "";
-                    String desc = "";
-                    String status = "";
-                    int year = 0;
-                    String state = "";
-                    String createdAt = "";
-                    String updatedAt = "";
-                    String lastVolume = "";
-                    String lastChapter = "";
-                    String publicationDemographic = "";
-
-                    try {
-                        title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
-                        mangaCover = manga.getAsJsonArray("relationships").get(2).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
-                        desc = attributes.getAsJsonObject("description").getAsJsonPrimitive("en").getAsString();
-                        status = attributes.getAsJsonPrimitive("status").getAsString();
-                        year = attributes.getAsJsonPrimitive("year").getAsInt();
-                        state = manga.getAsJsonObject("attributes").getAsJsonPrimitive("state").getAsString();
-                        createdAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("createdAt").getAsString();
-                        updatedAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("updatedAt").getAsString();
-                        lastVolume = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastVolume").getAsString();
-                        lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsString();
-                        publicationDemographic = manga.getAsJsonObject("attributes").getAsJsonPrimitive("publicationDemographic").getAsString();
-                    } catch (Exception ignored) {
-                    }
-
-                    MangaModel mangaModel = new MangaModel(id, title, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
-                    searchMangaList.add(mangaModel);
-                }
-                getMangaImage(searchMangaList);
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-
-            }
-        });
-    }
 
 }
