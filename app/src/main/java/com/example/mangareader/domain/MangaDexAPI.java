@@ -22,4 +22,7 @@ public interface MangaDexAPI {
     @GET("/manga/")
     Call<JsonObject> searchManga(@Query("title") String search);
 
+    @GET("/author/{author}")
+    Call<JsonObject> getAuthor(@Path("author") String author);
+
 }

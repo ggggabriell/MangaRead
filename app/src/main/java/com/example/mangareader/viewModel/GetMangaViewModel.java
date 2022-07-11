@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.mangareader.domain.MangaDexAPI;
 import com.example.mangareader.domain.RetrofitClient;
 import com.example.mangareader.domain.model.MangaModel;
+import com.example.mangareader.view.Manga;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -48,20 +49,12 @@ public class GetMangaViewModel extends ViewModel {
 
                     JsonObject attributes = manga.getAsJsonObject("attributes");
 
-                    String title = "";
-                    String mangaCover = "";
-                    String desc = "";
-                    String status = "";
+                    String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
                     int year = 0;
-                    String state = "";
-                    String createdAt = "";
-                    String updatedAt = "";
-                    String lastVolume = "";
-                    String lastChapter = "";
-                    String publicationDemographic = "";
 
                     try {
                         title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
+                        author = manga.getAsJsonArray("relationships").get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
                         mangaCover = manga.getAsJsonArray("relationships").get(2).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
                         desc = attributes.getAsJsonObject("description").getAsJsonPrimitive("en").getAsString();
                         status = attributes.getAsJsonPrimitive("status").getAsString();
@@ -75,10 +68,10 @@ public class GetMangaViewModel extends ViewModel {
                     } catch (Exception ignored) {
                     }
 
-                    MangaModel mangaModel = new MangaModel(id, title, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
+                    MangaModel mangaModel = new MangaModel(id, title, author, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
                     mangaList.add(mangaModel);
                 }
-                getMangaImage(mangaList, "features");
+                getMangaAuthor(mangaList, "features");
 
             }
 
@@ -133,6 +126,39 @@ public class GetMangaViewModel extends ViewModel {
 
     }
 
+    private void getMangaAuthor(List<MangaModel> list, String type) {
+
+        for (int i = 0; i < list.size(); i++) {
+
+            MangaDexAPI api = RetrofitClient.getRetrofitInstance().create(MangaDexAPI.class);
+            Call<JsonObject> callCover = api.getAuthor(list.get(i).getAuthor());
+
+            int finalI = i;
+            callCover.enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    JsonObject object = response.body();
+
+                    try {
+                        String author = object.getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonPrimitive("name").getAsString();
+                            list.get(finalI).setAuthor(author);
+
+
+                    } catch (Exception e) {
+                    }
+
+                    getMangaImage(list, type);
+                }
+
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                }
+            });
+        }
+    }
+
+
     public List<MangaModel> getMangaList() {
         return mangaList;
     }
@@ -141,10 +167,9 @@ public class GetMangaViewModel extends ViewModel {
         return searchMangaList;
     }
 
-
     public void searchManga(String search) {
 
-        if(!search.equals("")) {
+        if (!search.equals("")) {
 
 
             MangaDexAPI api = RetrofitClient.getRetrofitInstance().create(MangaDexAPI.class);
@@ -164,11 +189,12 @@ public class GetMangaViewModel extends ViewModel {
 
                         JsonObject attributes = manga.getAsJsonObject("attributes");
 
-                        String title = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
+                        String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
                         int year = 0;
 
                         try {
                             title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
+                            author = manga.getAsJsonArray("relationships").get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
                             mangaCover = manga.getAsJsonArray("relationships").get(2).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
                             desc = attributes.getAsJsonObject("description").getAsJsonPrimitive("en").getAsString();
                             status = attributes.getAsJsonPrimitive("status").getAsString();
@@ -183,13 +209,12 @@ public class GetMangaViewModel extends ViewModel {
                         }
 
                         if (!title.equals("")) {
-                            MangaModel mangaModel = new MangaModel(id, title, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
+                            MangaModel mangaModel = new MangaModel(id, title, author, desc, status, year, state, createdAt, updatedAt, lastVolume, lastChapter, publicationDemographic, mangaCover);
                             searchMangaList.add(mangaModel);
                         }
 
                     }
-                    getMangaImage(searchMangaList, "search");
-
+                    getMangaAuthor(searchMangaList, "search");
                 }
 
                 @Override
@@ -197,10 +222,11 @@ public class GetMangaViewModel extends ViewModel {
 
                 }
             });
-        }else{
+        } else {
             mangaList.clear();
             mSearch.setValue(true);
         }
 
     }
+
 }

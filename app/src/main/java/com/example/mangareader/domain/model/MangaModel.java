@@ -1,9 +1,12 @@
 package com.example.mangareader.domain.model;
 
-public class MangaModel {
+import java.io.Serializable;
+
+public class MangaModel implements Serializable {
 
     private String id;
     private String title;
+    private String author;
     private String desc;
     private String status;
     private int year;
@@ -20,9 +23,10 @@ public class MangaModel {
         this.mangaCover = mangaCover;
     }
 
-    public MangaModel(String id, String title, String desc, String status, int year, String state, String createdAt, String updatedAt,  String lastVolume, String lastChapter, String publicationDemographic, String mangaCover) {
+    public MangaModel(String id, String title, String author, String desc, String status, int year, String state, String createdAt, String updatedAt,  String lastVolume, String lastChapter, String publicationDemographic, String mangaCover) {
         this.id = id;
         this.title = title;
+        this.author = author;
         this.desc = desc;
         this.status = status;
         this.year = year;
@@ -130,5 +134,13 @@ public class MangaModel {
 
     public void setMangaCover(String mangaCover) {
         this.mangaCover = mangaCover;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

@@ -3,8 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/mangafeatures_item.xml" value="0.67" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/drawable-v24/border_shape.xml" value="0.196" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/drawable-v24/ic_menu.xml" value="0.196" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/drawable/ic_search.xml" value="0.196" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/activity_manga.xml" value="0.33" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/fragment_search.xml" value="0.4173076923076923" />
+        <entry key="..\:/Users/gabri/AndroidStudioProjects/MangaReader/app/src/main/res/layout/mangafeatures_item.xml" value="0.25" />
       </map>
     </option>
   </component>

@@ -26,9 +26,12 @@ import retrofit2.Response;
 public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdapter.ViewHolder> {
 
     private List<MangaModel> list = new ArrayList<>();
+    private final OnClick onClick;
 
-    public MangaFeaturesAdapter(List<MangaModel> list){
+
+    public MangaFeaturesAdapter(List<MangaModel> list, OnClick onClick){
         this.list = list;
+        this.onClick = onClick;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -54,8 +57,8 @@ public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdap
     public void onBindViewHolder(@NonNull MangaFeaturesAdapter.ViewHolder holder, int position) {
         MangaModel item = list.get(position);
 
-        if(item.getTitle().length() > 20){
-            String split = item.getTitle().substring(0, 18) +  "...";
+        if(item.getTitle().length() > 14){
+            String split = item.getTitle().substring(0, 14) +  "...";
             holder.tvMangaTitle.setText(split);
 
         }else{
@@ -70,6 +73,7 @@ public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdap
                 .into(holder.ivMangaCover);
 
 
+        holder.itemView.setOnClickListener(v -> onClick.OnClickListener(item));
     }
 
     @Override
@@ -78,6 +82,9 @@ public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdap
     }
 
 
+    public interface OnClick {
+        void OnClickListener(MangaModel manga);
+    }
 
 
 
