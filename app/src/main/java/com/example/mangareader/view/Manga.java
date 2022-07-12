@@ -39,14 +39,14 @@ public class Manga extends AppCompatActivity {
             Glide.with(this)
                     .asBitmap()
                     .load("https://mangadex.org/covers/" + manga.getMangaCover())
-                    .centerCrop()
                     .override(512, 256)
+                    .centerCrop()
                     .into(new CustomTarget<Bitmap>() {
                               @Override
                               public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                   Drawable dr = new BitmapDrawable(resource);
                                   binding.clMenu.setBackground(dr);
-                                  binding.clMenu.getBackground().setAlpha(130);
+                                  binding.clMenu.getBackground().setAlpha(40);
                               }
 
                               @Override
@@ -56,6 +56,12 @@ public class Manga extends AppCompatActivity {
                           }
                     );
 
+            Glide.with(this)
+                    .asBitmap()
+                    .load("https://mangadex.org/covers/" + manga.getMangaCover())
+                    .centerCrop()
+                    .override(256, 512)
+                    .into(binding.ivManga);
         }
 
         binding.ivArrowBack.setOnClickListener(v -> finish());

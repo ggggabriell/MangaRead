@@ -141,13 +141,13 @@ public class GetMangaViewModel extends ViewModel {
 
                     try {
                         String author = object.getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonPrimitive("name").getAsString();
-                            list.get(finalI).setAuthor(author);
+                        list.get(finalI).setAuthor(author);
 
 
                     } catch (Exception e) {
                     }
-
                     getMangaImage(list, type);
+
                 }
 
 

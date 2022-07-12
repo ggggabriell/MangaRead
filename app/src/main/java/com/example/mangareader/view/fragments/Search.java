@@ -53,9 +53,6 @@ public class Search extends Fragment implements MangaFeaturesAdapter.OnClick {
                 binding.rvSearchManga.setHasFixedSize(true);
                 mangaSearchAdapter = new MangaFeaturesAdapter(searchMangaList, this);
                 binding.rvSearchManga.setAdapter(mangaSearchAdapter);
-            }else{
-                Toast.makeText(view.getContext(), "Error while loading.", Toast.LENGTH_SHORT).show();
-
             }
         });
 
