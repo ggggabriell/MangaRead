@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mangareader.R;
 import com.example.mangareader.adapter.MangaFeaturesAdapter;
@@ -52,6 +53,9 @@ public class Search extends Fragment implements MangaFeaturesAdapter.OnClick {
                 binding.rvSearchManga.setHasFixedSize(true);
                 mangaSearchAdapter = new MangaFeaturesAdapter(searchMangaList, this);
                 binding.rvSearchManga.setAdapter(mangaSearchAdapter);
+            }else{
+                Toast.makeText(view.getContext(), "Error while loading.", Toast.LENGTH_SHORT).show();
+
             }
         });
 

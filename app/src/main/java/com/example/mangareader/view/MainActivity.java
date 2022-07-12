@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements MangaFeaturesAdap
                 mangaFeaturesAdapter = new MangaFeaturesAdapter(mangaList, this);
                 binding.rvMangaList.setAdapter(mangaFeaturesAdapter);
 
+            }else{
+                Toast.makeText(this, "Error while loading.", Toast.LENGTH_SHORT).show();
             }
         });
 
