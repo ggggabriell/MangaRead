@@ -11,6 +11,7 @@ import com.example.mangareader.view.Manga;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +47,13 @@ public class GetMangaViewModel extends ViewModel {
 
                     JsonObject manga = (JsonObject) arrayMangas.get(i);
                     String id = manga.getAsJsonPrimitive("id").getAsString();
-
                     JsonObject attributes = manga.getAsJsonObject("attributes");
 
                     String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
                     int year = 0;
+                    SimpleDateFormat dt = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss");
+                    SimpleDateFormat formated = new SimpleDateFormat( "yyyy");
+
 
                     try {
                         title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
@@ -65,6 +68,9 @@ public class GetMangaViewModel extends ViewModel {
                         lastVolume = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastVolume").getAsString();
                         lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsString();
                         publicationDemographic = manga.getAsJsonObject("attributes").getAsJsonPrimitive("publicationDemographic").getAsString();
+
+                        createdAt = formated.format(dt.parse(createdAt));
+                        updatedAt = formated.format(dt.parse(updatedAt));
                     } catch (Exception ignored) {
                     }
 
@@ -157,7 +163,6 @@ public class GetMangaViewModel extends ViewModel {
             });
         }
     }
-
 
     public List<MangaModel> getMangaList() {
         return mangaList;

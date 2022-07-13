@@ -25,4 +25,7 @@ public interface MangaDexAPI {
     @GET("/author/{author}")
     Call<JsonObject> getAuthor(@Path("author") String author);
 
+    @GET("/chapter/")
+    Call<JsonObject> getChapters(@Query("manga") String manga);
+
 }

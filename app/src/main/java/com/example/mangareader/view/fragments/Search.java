@@ -38,7 +38,7 @@ public class Search extends Fragment implements MangaFeaturesAdapter.OnClick {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-
+        binding.etSearch.requestFocus();
         mangaViewModel = new ViewModelProvider(getActivity()).get(GetMangaViewModel.class);
 
         binding.rvSearchManga.setLayoutManager( new GridLayoutManager(view.getContext(), 2));
