@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mangareader.R;
 import com.example.mangareader.domain.model.ChapterModel;
+import com.example.mangareader.domain.model.MangaModel;
 
 import org.w3c.dom.Text;
 
@@ -19,9 +20,11 @@ import java.util.List;
 public class ChaptersAdapter extends RecyclerView.Adapter<ChaptersAdapter.ViewHolder> {
 
     private List<ChapterModel> list = new ArrayList<>();
+    private final OnClick onClick;
 
-    public ChaptersAdapter(List<ChapterModel> list) {
+    public ChaptersAdapter(List<ChapterModel> list, OnClick onClick) {
         this.list = list;
+        this.onClick = onClick;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -49,9 +52,11 @@ public class ChaptersAdapter extends RecyclerView.Adapter<ChaptersAdapter.ViewHo
     public void onBindViewHolder(@NonNull ChaptersAdapter.ViewHolder holder, int position) {
         ChapterModel item = list.get(position);
 
-        holder.tvChapterNumber.setText("Chapter " + item.getChapter());
+        holder.tvChapterNumber.setText("Vol " + item.getVolume() + " Chapter " + item.getChapter());
         holder.tvTitle.setText(item.getTitle());
         holder.tvPages.setText(item.getPages() + " pages");
+
+        holder.itemView.setOnClickListener(v -> onClick.OnClickListener(item));
     }
 
     @Override
@@ -59,6 +64,9 @@ public class ChaptersAdapter extends RecyclerView.Adapter<ChaptersAdapter.ViewHo
         return list.size();
     }
 
+    public interface OnClick {
+        void OnClickListener(ChapterModel chapter);
+    }
 }
 
 

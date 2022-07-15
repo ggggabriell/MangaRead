@@ -69,8 +69,9 @@ public class MangaFeaturesAdapter extends RecyclerView.Adapter<MangaFeaturesAdap
                 .asBitmap()
                 .load("https://mangadex.org/covers/" + item.getMangaCover())
                 .centerCrop()
-                .override(256, 512)
+                .override(128, 256)
                 .into(holder.ivMangaCover);
+        ;
 
 
         holder.itemView.setOnClickListener(v -> onClick.OnClickListener(item));

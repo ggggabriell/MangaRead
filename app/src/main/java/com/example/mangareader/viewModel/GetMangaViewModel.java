@@ -49,8 +49,8 @@ public class GetMangaViewModel extends ViewModel {
                     String id = manga.getAsJsonPrimitive("id").getAsString();
                     JsonObject attributes = manga.getAsJsonObject("attributes");
 
-                    String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
-                    int year = 0;
+                    String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", publicationDemographic = "";
+                    int year = 0, lastChapter = 0;
                     SimpleDateFormat dt = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss");
                     SimpleDateFormat formated = new SimpleDateFormat( "yyyy");
 
@@ -66,7 +66,7 @@ public class GetMangaViewModel extends ViewModel {
                         createdAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("createdAt").getAsString();
                         updatedAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("updatedAt").getAsString();
                         lastVolume = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastVolume").getAsString();
-                        lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsString();
+                        lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsInt();
                         publicationDemographic = manga.getAsJsonObject("attributes").getAsJsonPrimitive("publicationDemographic").getAsString();
 
                         createdAt = formated.format(dt.parse(createdAt));
@@ -194,8 +194,10 @@ public class GetMangaViewModel extends ViewModel {
 
                         JsonObject attributes = manga.getAsJsonObject("attributes");
 
-                        String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", lastChapter = "", publicationDemographic = "";
-                        int year = 0;
+                        String title = "", author = "", mangaCover = "", desc = "", status = "", state = "", createdAt = "", updatedAt = "", lastVolume = "", publicationDemographic = "";
+                        int year = 0, lastChapter = 0;
+                        SimpleDateFormat dt = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss");
+                        SimpleDateFormat formated = new SimpleDateFormat( "yyyy");
 
                         try {
                             title = attributes.getAsJsonObject("title").getAsJsonPrimitive("en").getAsString();
@@ -208,8 +210,11 @@ public class GetMangaViewModel extends ViewModel {
                             createdAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("createdAt").getAsString();
                             updatedAt = manga.getAsJsonObject("attributes").getAsJsonPrimitive("updatedAt").getAsString();
                             lastVolume = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastVolume").getAsString();
-                            lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsString();
+                            lastChapter = manga.getAsJsonObject("attributes").getAsJsonPrimitive("lastChapter").getAsInt();
                             publicationDemographic = manga.getAsJsonObject("attributes").getAsJsonPrimitive("publicationDemographic").getAsString();
+
+                            createdAt = formated.format(dt.parse(createdAt));
+                            updatedAt = formated.format(dt.parse(updatedAt));
                         } catch (Exception ignored) {
                         }
 

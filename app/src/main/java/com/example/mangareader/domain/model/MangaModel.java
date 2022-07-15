@@ -14,7 +14,7 @@ public class MangaModel implements Serializable {
     private String updatedAt;
     private String state;
     private String lastVolume;
-    private String lastChapter;
+    private int lastChapter;
     private String publicationDemographic;
     private String mangaCover;
 
@@ -23,7 +23,7 @@ public class MangaModel implements Serializable {
         this.mangaCover = mangaCover;
     }
 
-    public MangaModel(String id, String title, String author, String desc, String status, int year, String state, String createdAt, String updatedAt,  String lastVolume, String lastChapter, String publicationDemographic, String mangaCover) {
+    public MangaModel(String id, String title, String author, String desc, String status, int year, String state, String createdAt, String updatedAt,  String lastVolume, int lastChapter, String publicationDemographic, String mangaCover) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -112,11 +112,11 @@ public class MangaModel implements Serializable {
         this.lastVolume = lastVolume;
     }
 
-    public String getLastChapter() {
+    public int getLastChapter() {
         return lastChapter;
     }
 
-    public void setLastChapter(String lastChapter) {
+    public void setLastChapter(int lastChapter) {
         this.lastChapter = lastChapter;
     }
 

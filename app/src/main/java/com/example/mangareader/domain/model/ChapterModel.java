@@ -1,8 +1,9 @@
 package com.example.mangareader.domain.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ChapterModel {
+public class ChapterModel implements Serializable {
     private String id;
     private String volume;
     private String chapter;

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -25,11 +26,12 @@ import com.example.mangareader.viewModel.GetChapterViewModel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 
-public class Manga extends AppCompatActivity {
+public class Manga extends AppCompatActivity implements ChaptersAdapter.OnClick{
 
     private ActivityMangaBinding binding;
     private MangaModel manga;
@@ -46,21 +48,22 @@ public class Manga extends AppCompatActivity {
         manga = (MangaModel) getIntent().getSerializableExtra("manga");
 
         chapterViewModel = new ViewModelProvider(this).get(GetChapterViewModel.class);
-        chapterViewModel.getChapters(manga.getId());
+        chapterViewModel.getChapters(manga);
 
-        binding.rvChapter.setLayoutManager( new LinearLayoutManager(this));
-        binding.rvChapter.setHasFixedSize(true);
+
 
         chapterViewModel.getChapter.observe(this, sucess -> {
             if(sucess){
-                binding.tvChapters.setText(chapterViewModel.getChapterListSize() + " chapters");
                 chapterList = chapterViewModel.getChaptersList();
+                Collections.reverse(chapterList);
 
-
-                chaptersAdapter = new ChaptersAdapter(chapterList);
+                binding.tvChapters.setText(chapterList.size() + " chapters");
+                binding.rvChapter.setLayoutManager( new LinearLayoutManager(this));
+                binding.rvChapter.setHasFixedSize(true);
+                chaptersAdapter = new ChaptersAdapter(chapterList, this);
                 binding.rvChapter.setAdapter(chaptersAdapter);
             }else{
-//                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -105,5 +108,19 @@ public class Manga extends AppCompatActivity {
 
         binding.ivArrowBack.setOnClickListener(v -> finish());
 
+    }
+
+    @Override
+    public void OnClickListener(ChapterModel chapter) {
+            chapterViewModel.getChaptersUrl(chapter);
+            chapterViewModel.getChapterUrl.observe(this, sucess -> {
+                if(sucess){
+                    chapter.setPagesUrl( chapterViewModel.getChapterUrl());
+                    Intent intent = new Intent(this, ReadManga.class);
+                    intent.putExtra("chapter", chapter);
+                    startActivity(intent);
+
+                }
+            });
     }
 }

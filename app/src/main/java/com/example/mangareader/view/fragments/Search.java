@@ -63,6 +63,7 @@ public class Search extends Fragment implements MangaFeaturesAdapter.OnClick {
 
             @Override
             public void onTextChanged(CharSequence c, int i, int i1, int i2) {
+
                 search = c.toString();
                 mangaViewModel.searchManga(search);
 
